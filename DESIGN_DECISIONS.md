@@ -1,35 +1,33 @@
-# Design Decisions – Anagram Finder
+Design Decisions – Anagram Finder
 
-## Approach
+Approach
 
-We use a dictionary (`dict`) where the key is the sorted version of a word, and the value is a list of all words that share that sorted key (i.e., they are anagrams).
-This ensures:
-- Efficient lookup and grouping
-- Easy scalability and readability
+To find anagrams, I used a Python dictionary. The idea is simple: for each word, I sort its letters alphabetically and use that sorted version as a key. Then I store the original word in a list under that key. This way, all anagrams (which have the same sorted letters) end up grouped together.
 
-## Why Sorted Keys?
+Example:
 
-Sorting the characters in a word means that all anagrams will yield the same key. For example:
-- `race` → `acer`
-- `care` → `acer`
-- `acre` → `acer`
+"race" becomes "acer"
+"care" also becomes "acer"
+So does "acre"
+So in the dictionary, "acer" maps to ["race", "care", "acre"].
 
-These will be grouped under the same key.
+Why Sort the Letters?
 
-## Performance Considerations
+Sorting is the easiest way to make sure that anagrams look the same. Even if the original words are different, once sorted, they all become identical if they're anagrams. That makes it super easy to group them.
 
-- For **10 million words**:
-  - The current solution handles it efficiently with Python dictionaries.
-  - It has a time complexity of ~O(N * K log K), where:
-    - N = number of words
-    - K = average word length
+Performance
 
-- For **100 billion words**:
-  - The script should be reimplemented using distributed computing (e.g., Hadoop MapReduce or Spark)
-  - Or store and process data in a streaming or chunked fashion
+If we have about 10 million words, this method works fast because Python dictionaries are very efficient.
+The time complexity is about O(N × K log K), where:
+N is the number of words
+K is the average length of a word (because sorting takes time)
+For very large datasets like 100 billion words, this script would be too slow and use too much memory. In that case, it would be better to:
+Use tools like Hadoop or Apache Spark to split the work across many machines
+Or process the words in smaller chunks or streams
+External Libraries
 
-## External Libraries
-None used – only standard Python 3 built-in functions and types.
+I didn’t use any extra libraries—just built-in Python stuff. That makes the code simple and easy to run anywhere with Python 3.
 
-## Maintainability
-The script is short and modular with clearly named functions and minimal code repetition.
+Maintainability
+
+The code is clean and short. I used functions with clear names, and I avoided repeating code, so it should be easy to understand or update later.
